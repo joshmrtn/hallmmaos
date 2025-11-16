@@ -1,0 +1,15 @@
+# Core Orchestration and Configuration
+python-decouple
+pydantic
+
+# LLM Framework
+ollama
+
+# General Utilities
+requests
+
+# Chat Adapter
+zulip
+
+# Testing Framework 
+pytest

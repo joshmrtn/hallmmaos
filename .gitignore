@@ -1,0 +1,6 @@
+# Python environment
+venv/
+
+# Secrets files
+*SECRETS.json
+.env
