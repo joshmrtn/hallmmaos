@@ -1,7 +1,24 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import List, Optional
+from enum import Enum
 from datetime import datetime
 
+class TaskStatus(Enum):
+    """
+    The current state of a Task in the scheduling pipeline.
+    """
+    NEW = "NEW"
+    """Task created, waiting for first scheduler pass. (Initial state)."""
+    PENDING = "PENDING"
+    """Task validated. Waiting to be executed."""
+    RUNNING = "RUNNING"
+    """Currently executing."""
+    COMPLETED = "COMPLETED"
+    """Execution finished successfully."""
+    FAILED = "FAILED"
+    """Execution stopped due to an error."""
+    CANCELLED = "CANCELLED"
+    """Stopped or expired."""
 
 class Task(BaseModel):
     """
@@ -45,7 +62,7 @@ class Task(BaseModel):
     )
     """A list of task_id strings that this task is a prerequisite of."""
     required_ram_mb: int = Field(
-        1024,
+        4096,
         ge=1,
         description="Estimated RAM in MB required for task execution."
     )
@@ -56,9 +73,9 @@ class Task(BaseModel):
         description="Estimated CPU cores/fraction required for task execution."
     )
     """Estimated CPU cores/fraction required for task execution."""
-    status: str = Field(
-        "PENDING",
-        description="The current state of the task. (e.g., PENDING, RUNNING, COMPLETE).",
+    status: TaskStatus = Field(
+        TaskStatus.NEW,
+        description="The current state of the task. (e.g., PENDING, RUNNING, COMPLETED).",
     )
     """The current state of the task. (e.g., PENDING, RUNNING, COMPLETE)."""
     duration_estimate_sec: Optional[float] = Field(
