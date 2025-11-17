@@ -13,3 +13,7 @@ zulip
 
 # Testing Framework 
 pytest
+pytest-mock
+
+# System resource monitoring
+psutil
