@@ -4,3 +4,10 @@ venv/
 # Secrets files
 *SECRETS.json
 .env
+
+# Testing artifacts
+.pytest_cache/
+
+# Compiled bytecode
+__pycache__/
+*.pyc
