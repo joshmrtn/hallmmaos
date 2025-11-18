@@ -1,0 +1,25 @@
+# --- System Wide Settings ---
+system: 
+  # The minimum logging level (e.g., DEBUG, INFO, WARNING, ERROR).
+  log_level: "INFO"
+  # Time (in seconds) the application will wait for graceful shutdown before force-killing threads.
+  shutdown_timeout_sec: 30
+
+# --- Task Data Repository Settings ---
+tasks_data:
+  # Flag: If true, the application uses local JSON/file persistence.
+  # If false, it attempts to connect using the DB connection string/path.
+  use_local_json: true
+
+  # Base directory where all local data files are stored.
+  # This path is calculated dynamically based on the OS.
+  data_base_dir: "__CALCULATE_DATA_PATH__"
+
+  # Filename for the active task queue data file.
+  active_repo_file: "tasks_active.json"
+
+  # Filename for the archive task data file.
+  archive_repo_file: "tasks_archive.json"
+
+  # Path to a file containing DB credentials or connection string
+  # TODO: Create DB connection capabilities.

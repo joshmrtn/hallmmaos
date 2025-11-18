@@ -1,6 +1,7 @@
 # Core Orchestration and Configuration
 python-decouple
 pydantic
+pyyaml # Loading .yaml files. 
 
 # LLM Framework
 ollama
@@ -15,5 +16,6 @@ zulip
 pytest
 pytest-mock
 
-# System resource monitoring
-psutil
+# Operating system abstraction
+psutil       # System resource monitoring
+platformdirs # System agnostic file paths
