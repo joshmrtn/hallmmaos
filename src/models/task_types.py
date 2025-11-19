@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class TaskStatus(Enum):
     """
@@ -35,6 +35,26 @@ class Task(BaseModel):
         ..., description="A unique, immutable identifier for the task instance."
     )
     """A unique, immutable identifier for the task instance."""
+    task_description: str = Field(
+        default="", 
+        description="The description of the task to complete. E.g., 'summarize this email...'"
+    )
+    """The description of the task to complete. E.g., 'summarize this email...'"""
+    task_acceptance_criteria: str = Field(
+        default="",
+        description="The specific requirements for this task to be considered 'done'."
+    )
+    """The specific requirements for this task to be considered 'done'."""
+    requires_human_acceptance: bool = Field(
+        default=False,
+        description="If True, a human must approve this task to mark it as complete."
+    )
+    """If True, a human must approve this task to mark it as complete."""
+    deadline: datetime = Field(
+        default_factory= datetime.now() + timedelta(days=7),
+        description="The deadline of the task. Defaults to 7 days from creation date."
+    )
+    """The deadline of the task. Defaults to 7 days from creation date."""
     agent_id: str = Field(
         ..., description="The id of the agent assigned to this task."
     )
