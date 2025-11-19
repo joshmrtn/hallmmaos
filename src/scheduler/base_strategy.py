@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from .task import Task
+from src.models.task_types import Task
 
 class BaseSchedulingStrategy(ABC):
     """

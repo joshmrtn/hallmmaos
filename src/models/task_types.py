@@ -58,12 +58,12 @@ class Task(BaseModel):
     )
     """The task's priority level (1=Highest, 10=Lowest)"""
     blocked_by: List[str] = Field(
-        ...,
+        default_factory=list,
         description="A list of task_id strings that are prerequisite to this task."
     )
     """A list of task_id strings that are prerequisite to this task."""
     blocking: List[str] = Field(
-        ...,
+        default_factory=list,
         description="A list of task_id strings that this task is a prerequisite of."
     )
     """A list of task_id strings that this task is a prerequisite of."""
@@ -107,4 +107,12 @@ class Task(BaseModel):
         )
     )
     """Minimal state data required to pause and resume the task."""
+    execution_metrics: Optional[dict] = Field(
+        None,
+        description=(
+            "Actual execution metrics used to improve future execution estimations."
+        )
+
+    )
+    """Actual execution metrics used to improve future execution estimations."""
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from .task import Task
+from src.models.task_types import Task
 
 
 class BaseScheduler(ABC):
@@ -34,16 +34,16 @@ class BaseScheduler(ABC):
         pass
 
     @abstractmethod
-    def update_status(self, task_id: str, metrics: dict):
+    def update_task(self, task: Task):
         """
-        Record the outcome and performance metrics of a completed or checkpointed task.
-        
-        This data is used to refine historical performance models, and is critical 
-        to updating checkpoint information (state) when a task is paused.
+        Update an existing Task in the queue by passing a new Task object with 
+        updated fields. If a Task is provided with a task_id that doesn't exist, 
+        this will throw an error.
         
         Args:
-            task_id: Unique identifier for the task.
-            metrics: A dictionary containing execution metrics."""
+            task (Task): The new Task object which will replace the existing task 
+                        with the matching task_id.
+        """
         pass
 
     @abstractmethod
