@@ -22,10 +22,19 @@ def fake_config_path(tmp_path, monkeypatch):
         config_dir = tmp_path / 'mock_config_root' / APP_NAME
         config_dir.mkdir(parents=True, exist_ok=True)
         return str(config_dir)
+    
+    def mock_user_log_dir(appname, *args, **kwargs):
+        log_dir = tmp_path / 'mock_log_root' / APP_NAME
+        log_dir.mkdir(parents=True, exist_ok=True)
+        return str(log_dir)
 
     monkeypatch.setattr(
         'src.config.config_manager.site_config_dir', 
         mock_site_config_dir
+    )
+    monkeypatch.setattr(
+        'src.config.config_manager.user_log_dir',
+        mock_user_log_dir
     )
     
     # 2. Clear the Singleton instance before each test
@@ -66,6 +75,11 @@ def test_config_manager_creates_default_file_when_missing(fake_config_path):
     assert data_dir.startswith(os.sep) or data_dir.startswith('C:') # Check for standard path start
     assert '__CALCULATE_DATA_PATH__' not in data_dir
 
+    # ASSERT: Check Log Dir Path calculation
+    log_dir = config_content['logging']['log_dir']
+    assert '__CALCULATE_LOG_PATH__' not in log_dir
+    assert 'mock_log_root' in log_dir
+
 def test_config_manager_reads_custom_file_and_ignores_defaults(fake_config_path):
     """
     Tests that if config.yaml exists, the ConfigManager reads it and uses its custom values.
@@ -73,7 +87,8 @@ def test_config_manager_reads_custom_file_and_ignores_defaults(fake_config_path)
     # ARRANGE: Write a custom config file that deviates from defaults
     custom_content = {
         'system': {'log_level': 'DEBUG'},
-        'tasks_data': {'active_repo_file': 'custom_active.json'}
+        'tasks_data': {'active_repo_file': 'custom_active.json'},
+        'logging': {'log_dir': '/custom/logs'}
     }
     
     # Ensure the parent directory exists before writing the file
@@ -86,6 +101,8 @@ def test_config_manager_reads_custom_file_and_ignores_defaults(fake_config_path)
 
     # ASSERT: Manager uses the custom value, not the default ('INFO')
     assert manager.get('system', 'log_level') == 'DEBUG'
+    # ASSERT: Manager uses custom logging path value
+    assert manager.get('logging', 'log_dir') == '/custom/logs'
     # ASSERT: Manager uses the custom value
     assert manager.get('tasks_data', 'active_repo_file') == 'custom_active.json'
     # ASSERT: Manager falls back to default for keys not specified (e.g., shutdown_timeout_sec)

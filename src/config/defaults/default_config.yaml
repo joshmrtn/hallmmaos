@@ -5,6 +5,21 @@ system:
   # Time (in seconds) the application will wait for graceful shutdown before force-killing threads.
   shutdown_timeout_sec: 30
 
+# --- Logging Settings
+logging:
+  # Directory where log files will be stored, auto-calculated based on OS, e.g., 
+  # /var/log/ or /AppData/Local/Logs/
+  log_dir: "__CALCULATE_LOG_PATH__"
+
+  # Log file name
+  log_file_name: "hallmmaos.log"
+
+  # Max size of a single log file in bytes (10MB = 10485760)
+  max_bytes: 10485760
+
+  # Number of backup files to keep for rotation.
+  backup_count: 5
+
 # --- Task Data Repository Settings ---
 tasks_data:
   # Flag: If true, the application uses local JSON/file persistence.

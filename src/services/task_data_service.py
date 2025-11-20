@@ -5,6 +5,9 @@ from src.config.config_manager import ConfigManager
 
 from typing import Optional, Dict, Tuple, List, Any
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 class TaskDataService:
     """
@@ -46,8 +49,8 @@ class TaskDataService:
             file_path=base_path / archive_file
         )
 
-        print(f"TaskDataService initialized with Active Repo: {base_path / active_file}")        
-        print(f"TaskDataService initialized with Archive Repo: {base_path / archive_file}")
+        logger.info(f"TaskDataService initialized with Active Repo: {base_path / active_file}")        
+        logger.info(f"TaskDataService initialized with Archive Repo: {base_path / archive_file}")
 
 
     def add_task(self, task: Task) -> None:

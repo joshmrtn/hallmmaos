@@ -1,9 +1,12 @@
 import json
+import logging
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple
 
 from src.models.task_types import Task, TaskStatus
 from src.data.base_task_repository import BaseTaskRepository
+
+logger = logging.getLogger(__name__)
 
 class JsonTaskRepository(BaseTaskRepository):
     """
@@ -30,6 +33,7 @@ class JsonTaskRepository(BaseTaskRepository):
             The Tasks dict.
         """
         if not self._file_path.exists():
+            logger.info(f"No existing data file found at {self._file_path}. Starting with empty DB.")
             return {}
         
         try:
@@ -42,11 +46,11 @@ class JsonTaskRepository(BaseTaskRepository):
                 try:
                     tasks[task_id] = Task(**data)
                 except Exception as e:
-                    print(f"Error converting Task {task_id} to Pydantic format: {e}")
+                    logger.error(f"Error converting Task {task_id} to Pydantic format: {e}", exc_info=True)
             return tasks
         
         except (IOError, json.JSONDecodeError) as e:
-            print(f"Warning: Failed to load tasks from {self._file_path}. Starting clean. Error: {e}")
+            logger.warning(f"Warning: Failed to load tasks from {self._file_path}. Starting clean. Error: {e}")
             return {}
         
     
@@ -64,7 +68,7 @@ class JsonTaskRepository(BaseTaskRepository):
             with open(self._file_path, 'w') as f:
                 json.dump(serializable_data, f, indent=4, default=str)
         except IOError as e:
-            print(f"Error saving tasks to {self._file_path}: {e}")
+            logger.error(f"Error saving tasks to {self._file_path}: {e}", exc_info=True)
 
     def add(self, task: Task) -> None:
         """

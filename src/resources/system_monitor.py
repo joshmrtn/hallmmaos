@@ -1,9 +1,12 @@
 import psutil
 import time
 from typing import List
+import logging
 
 from src.resources.base_monitor import BaseResourceMonitor
 from src.resources.resource_types import SystemHealth, ProcessHealth
+
+logger = logging.getLogger(__name__)
 
 class SystemResourceMonitor(BaseResourceMonitor):
     """
@@ -80,7 +83,7 @@ class SystemResourceMonitor(BaseResourceMonitor):
             )
         
         except Exception as e:
-            print(f"Error during system snapshot: {e}")
+            logger.warning(f"Error during system snapshot: {e}.", exc_info=True)
             # Return a zeroed, safe state on failure.
             return SystemHealth(
                 timestamp=time.time(),

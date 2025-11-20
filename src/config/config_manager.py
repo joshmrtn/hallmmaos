@@ -3,8 +3,12 @@ import json
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from platformdirs import site_config_dir
+from platformdirs import site_config_dir, user_log_dir
 import inspect
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 APP_NAME = "hallmmaos"
 CONFIG_FILE_NAME = "config.json"
@@ -53,6 +57,11 @@ class ConfigManager:
         """
         return Path(site_config_dir(appname=APP_NAME)).parent.joinpath("data")
 
+    def _get_log_base_dir(self) -> Path:
+        """
+        Calculates the OS-appropriate directory for logs.
+        """
+        return Path(user_log_dir(appname=APP_NAME))
 
     def _load_defaults(self) -> None:
         """Loads the default configuration from the internal default_config.yaml file."""
@@ -60,8 +69,9 @@ class ConfigManager:
         try:
             with open(default_path, 'r') as f:
                 ConfigManager._default_config_data = yaml.safe_load(f)
-            print(f"Loaded default configuration from : {default_path}")
+            logger.info(f"Loaded default configuration from : {default_path}")
         except (IOError, yaml.YAMLError) as e:
+            logger.critical(f"Failed to load application defaults from {default_path}: {e}", exc_info=True)
             raise RuntimeError(f"FATAL: Failed to load application defaults from {default_path}: {e}")
 
     def _write_default_config(self, config_path: Path) -> None: 
@@ -69,17 +79,21 @@ class ConfigManager:
 
         writeable_config = self._default_config_data.copy()
         calculated_data_path = self._get_data_base_dir().as_posix()
+        calculated_log_path = self._get_log_base_dir().as_posix()
 
         if writeable_config.get("tasks_data", {}).get("data_base_dir") == "__CALCULATE_DATA_PATH__":
              writeable_config["tasks_data"]["data_base_dir"] = calculated_data_path
 
+        if writeable_config.get("logging", {}).get("log_dir") == "__CALCULATE_LOG_PATH__":
+            writeable_config["logging"]["log_dir"] = calculated_log_path
         try:
             config_path.parent.mkdir(parents=True, exist_ok=True)
             with open(config_path, 'w') as f:
                 yaml.dump(writeable_config, f, indent=2, sort_keys=False)
 
-            print(f"Created default configuration file at: {config_path}")
+            logger.info(f"Created default configuration file at: {config_path}")
         except IOError as e:
+            logger.error(f"Failed to write default configuration to disk: {e}", exc_info=True)
             raise RuntimeError(f"Failed to write default configuration to disk: {e}")
     
 
@@ -88,7 +102,7 @@ class ConfigManager:
         config_path = self._get_app_config_path()
 
         if not config_path.exists():
-            print(f"INFO: Configuration file not found at {config_path}. Writing default config.")
+            logger.warning(f"Configuration file not found at {config_path}. Writing default config.")
             self._write_default_config(config_path)
             
 
@@ -96,7 +110,7 @@ class ConfigManager:
             with open(config_path, 'r') as f:
                 ConfigManager._config_data = yaml.safe_load(f)
         except (IOError, yaml.YAMLError) as e:
-            print(f"ERROR: Error loading configuration from {config_path}: {e}")
+            logger.error(f"ERROR: Error loading configuration from {config_path}: {e}", exc_info=True)
             raise RuntimeError(f"Failed to initialize configuration from {config_path}: {e}")
         
 
