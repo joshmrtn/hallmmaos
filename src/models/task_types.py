@@ -51,7 +51,7 @@ class Task(BaseModel):
     )
     """If True, a human must approve this task to mark it as complete."""
     deadline: datetime = Field(
-        default_factory= datetime.now() + timedelta(days=7),
+        default = datetime.now() + timedelta(days=7),
         description="The deadline of the task. Defaults to 7 days from creation date."
     )
     """The deadline of the task. Defaults to 7 days from creation date."""
