@@ -19,8 +19,11 @@ class BaseTextLLM(ABC):
         model_key: str,
         system_instruction: Optional[SystemInstruction] = None,
         tools: Optional[List[Dict[str, Any]]] = None,
+        temperature: float = 0.7,
+        max_tokens: Optional[int] = None,
         retries: int = 3,
-        backoff_factor: float = 2.0 
+        backoff_factor: float = 2.0,
+        **kwargs
         ) -> Dict[str, Any]:
         """
         Send a request to the LLM to generate text based on context.
@@ -35,8 +38,11 @@ class BaseTextLLM(ABC):
             system_instruction (SystemInstruction): Optional. Define's model's persona, rules, and 
                                                     constraints for the current request.
             tools (Dict[]): A list of available tools the model can use.
+            temperature (float): The 'temperature' setting to use. Default 0.7.
+            max_tokens (Optional int): Maximum number of tokens for context window. 
             retries (int): The maximum number of times to retry an API call on transient errors.
             backoff_factor (float): The exponential factor for wait time between retries.
+            kwargs (Any): additional keyword arguments for specific platforms.
 
         Returns:
             A dictionary containing the full response from the LLM, including the generated 

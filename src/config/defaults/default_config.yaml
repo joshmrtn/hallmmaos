@@ -23,3 +23,12 @@ tasks_data:
 
   # Path to a file containing DB credentials or connection string
   # TODO: Create DB connection capabilities.
+
+# --- LLM Settings ---
+llm:
+  # The LLM backend to use. Currently only supports "ollama"
+  backend: "ollama"
+
+  # The base URL where the Ollama API is running
+  base_url: "http://localhost:11434"
+
